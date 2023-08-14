@@ -2,13 +2,13 @@
 
 1) Open terminal
 
-2) docker exec -it mongo1 /bin/bash
+2) docker exec -it mongo1 /bin/bash             #Copy-Paste es in den Terminal / Öffnet die Bash
 
-3) mongosh --shell /scripts/init_replica.js
+3) mongosh --shell /scripts/init_replica.js     #Copy-Paste es in den Terminal / Öffnet die Mongosh und führt den Code aus
 
-4) rs.status()
+4) rs.status()                                  #Copy-Paste es in den Terminal / Überprüft den Status
 
-5) exit
+5) exit                                         #Copy-Paste es in den Terminal / Geht aus der Mongo Shell
 
 '''
 
@@ -16,11 +16,11 @@
 
 1) Open terminal
 
-2) docker exec -it mongo1 /bin/bash
+2) docker exec -it mongo1 /bin/bash             #Copy-Paste es in den Terminal / Öffnet die Bash
 
-3) cd scripts
+3) cd scripts                                   #Wecheslt in den Ordner "Scripts"
 
-4) copy/paste: (not''')
+4) copy/paste: (not''')                         #Führt die .sh-Datei aus zum Starten des Kafka-MongoDB-Konnektors
 '''
 
 #!/bin/bash
@@ -30,4 +30,4 @@ chmod +x run-registry.sh
 
 '''
 
-5) Sink is ready!!
+5) Sink is ready!!                              #Jetzt können Daten von Python an Kafka gesendet werden, Kafka sendet die Daten an MongoDB
