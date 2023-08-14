@@ -4,7 +4,7 @@
 
 2) docker exec -it mongo1 /bin/bash             #Copy-Paste es in den Terminal / Öffnet die Bash
 
-3) mongosh --shell /scripts/init_replica.js     #Copy-Paste es in den Terminal / Öffnet die Mongosh und führt den Code aus
+3) mongosh --shell /scripts/init_replica.js     #Copy-Paste es in den Terminal / Öffnet die Mongosh und führt den Code aus (nicht 1~, falls vorhanden bei CP)
 
 4) rs.status()                                  #Copy-Paste es in den Terminal / Überprüft den Status
 
