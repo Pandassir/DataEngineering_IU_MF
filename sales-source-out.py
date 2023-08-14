@@ -20,7 +20,7 @@ producer = KafkaProducer(
     value_serializer=lambda v: json.dumps(v).encode('utf-8')  
 )
 
-for i in range(5):
+for i in range(1100000):
     key = "fruits"  
 
     data = {
