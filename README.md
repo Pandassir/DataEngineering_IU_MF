@@ -43,5 +43,5 @@ IaC mit Docker Compose
 
         user: test         passwort: password
 
-7) Im Rahmen dieses Projekt wurde für Testzwecke lediglich Basic Auth gewählt. Es können jedoch über Treafik weitere Sicherheitseinstellungen vorgenommen werden. 
+7) Im Rahmen dieses Projekt wurde für Testzwecke lediglich Basic Auth gewählt. Es können jedoch über Traeafik weitere Sicherheitseinstellungen vorgenommen werden. 
 
