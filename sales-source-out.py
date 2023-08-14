@@ -11,17 +11,17 @@ regions = ["germany", "switzerland"]
 start_date = datetime(2020, 1, 1)
 end_date = datetime(2023, 12, 31)
 
-KAFKA_BROKER = 'localhost:29092' 
+KAFKA_BROKER = 'localhost:29092'  
 KAFKA_TOPIC = 'supermarket'  
 
 producer = KafkaProducer(
     bootstrap_servers=KAFKA_BROKER,
-    key_serializer=str.encode,  y
-    value_serializer=lambda v: json.dumps(v).encode('utf-8') 
+    key_serializer=str.encode,  
+    value_serializer=lambda v: json.dumps(v).encode('utf-8')  
 )
 
 for i in range(5):
-    key = "fruits" 
+    key = "fruits"  
 
     data = {
         "fruit": random.choice(fruits),
@@ -38,8 +38,8 @@ for i in range(5):
     except Exception as e:
         print(f"Beim Senden der Nachricht {i} ist ein Fehler aufgetreten: {e}")
 
-producer.flush()
 
+producer.flush()
 
 
 
