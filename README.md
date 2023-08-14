@@ -30,7 +30,7 @@ IaC mit Docker Compose
 
     ![Alt text](image.png) (Example!)
 
-5) Nachdem die Daten von Python zu Kafka und von Kafka in die MongoDB-Datenbanken gealden wurden, können diese mit Pyspark im Jupyter/Pyspark-Notebook bearbeitet werden.
+5) Nachdem die Daten von Python zu Kafka und von Kafka in die MongoDB-Datenbanken geladen wurden, können diese mit Pyspark im Jupyter/Pyspark-Notebook bearbeitet werden.
     Dafür kann der Code von der "sales-spark-session.py" - Datei verwendet werden. Bitte  zuerst den Code von '''Initializing the Spark-Mongo Connector''' ausführen und anschließend kann der Code von '''Loading data as DataFrame using Spark'''  ausgeführt werden.
 
 6) Dashboards:
@@ -42,5 +42,5 @@ IaC mit Docker Compose
 
         user: test         passwort: password
 
-7) Im Rahmen dieses Projekt wurde für Testzwecke lediglich Basic Auth gewählt. Es können jedoch über Traeafik weitere Sicherheitseinstellungen vorgenommen werden. 
+7) Im Rahmen dieses Projektes wurde für Testzwecke lediglich Basic Auth gewählt. Es können jedoch über Traeafik weitere Sicherheitseinstellungen vorgenommen werden. 
 
