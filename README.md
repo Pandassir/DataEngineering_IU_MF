@@ -31,8 +31,7 @@ IaC mit Docker Compose
     ![Alt text](image.png) (Example!)
 
 5) Nachdem die Daten von Python zu Kafka und von Kafka in die MongoDB-Datenbanken gealden wurden, können diese mit Pyspark im Jupyter/Pyspark-Notebook bearbeitet werden.
-    Dafür kann die "sales-spark-session.py" - Datei verwendet werden. Bitte  zuerst den Code von '''Initializing the Spark-Mongo Connector''' ausführen und anschließend kann der 
-    Code von '''Loading data as DataFrame using Spark'''  ausgeführt werden.
+    Dafür kann der Code von der "sales-spark-session.py" - Datei verwendet werden. Bitte  zuerst den Code von '''Initializing the Spark-Mongo Connector''' ausführen und anschließend kann der Code von '''Loading data as DataFrame using Spark'''  ausgeführt werden.
 
 6) Dashboards:
     - Mongo-Express:                mongo-express.localhost     (Copy-Paste in den Webbrowser)
