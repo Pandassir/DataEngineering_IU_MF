@@ -262,7 +262,7 @@ volumes:
 
 networks:
   default:
-    name: kafka-net
+    name: data-net
       
     
 
