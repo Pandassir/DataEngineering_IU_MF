@@ -9,7 +9,8 @@ IaC mit Docker Compose
     ![Alt text](image-1.png)
 
 2) Anweisung:
-    Zuerst müssen alle Dateien von GitHub heruntergeladen werden. Desweiteren muss Docker Desktop auf dem PC installiert werden.
+    Zuerst müssen alle Dateien von GitHub heruntergeladen werden. Desweiteren muss Docker Desktop und Visual Studio Code auf dem PC installiert werden.
+    Füge die Dateien zum Workspace von VSC hinzu.
     Über folgenden Befehl müssen die Container gestartet werden:
 
         docker-compose up -d
