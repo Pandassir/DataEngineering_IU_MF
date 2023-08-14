@@ -18,7 +18,7 @@
 
 2) docker exec -it mongo1 /bin/bash             #Copy-Paste es in den Terminal / Öffnet die Bash
 
-3) cd scripts                                   #Wecheslt in den Ordner "Scripts"
+3) cd scripts                                   #opy-Paste es in den Terminal / Wecheslt in den Ordner "scripts"
 
 4) copy/paste: (not''')                         #Führt die .sh-Datei aus zum Starten des Kafka-MongoDB-Konnektors
 '''
@@ -30,4 +30,4 @@ chmod +x run-registry.sh
 
 '''
 
-5) Sink is ready!!                              #Jetzt können Daten von Python an Kafka gesendet werden, Kafka sendet die Daten an MongoDB
+5) Sink is ready!!                              #Jetzt können Daten von Python an Kafka gesendet werden. Kafka sendet die Daten weiter an MongoDB
