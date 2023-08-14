@@ -1,0 +1,268 @@
+version: '3.8'
+
+services:
+   ############################################
+  # Kafka area - data ingestion:               #
+   ############################################
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:6.0.14
+    hostname: zookeeper
+    container_name: zookeeper
+    ports:
+      - 2181:2181
+    restart: always
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000  
+    labels:
+      - "traefik.enable=true"      
+      - "traefik.http.routers.zookeepe.rule=Host(`zookeepe.localhost`)"
+      - "traefik.http.routers.zookeepe.middlewares=auth"
+      - "traefik.http.middlewares.auth.basicauth.users=test:$$2a$$12$$J/TuYMm.k42aGn3Buo39ZOcnoi6RN4P2rlMYOU/fozCPku/qmU9ri"
+    
+  
+  broker:
+    image: confluentinc/cp-enterprise-kafka:6.0.14
+    hostname: broker
+    container_name: broker
+    depends_on:
+      - zookeeper
+    ports:
+      - "29092:29092"   
+      - "9092:9092"
+    restart: always
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_CREATE_TOPICS: 'supermarket:1:1'       
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1  
+      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://broker:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_METRIC_REPORTERS: io.confluent.metrics.reporter.ConfluentMetricsReporter
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      CONFLUENT_METRICS_REPORTER_BOOTSTRAP_SERVERS: 'broker:9092'
+      CONFLUENT_METRICS_REPORTER_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      CONFLUENT_METRICS_REPORTER_TOPIC_REPLICAS: 1
+      CONFLUENT_METRICS_ENABLE: 'true'
+      CONFLUENT_SUPPORT_CUSTOMER_ID: 'anonymous'   
+
+
+  rest-proxy:
+    image: confluentinc/cp-kafka-rest:6.0.14
+    hostname: rest-proxy
+    container_name: rest-proxy
+    depends_on:
+      - zookeeper
+      - broker
+    ports:
+      - 8082:8082 
+    restart: always   
+    environment:
+      KAFKA_REST_HOST_NAME: rest-proxy
+      KAFKA_REST_BOOTSTRAP_SERVERS: 'broker:9092'
+      KAFKA_REST_LISTENERS: "http://0.0.0.0:8082"
+      KAFKA_REST_SCHEMA_REGISTRY_URL: "http://schema-registry:8081"
+
+
+  kafka-topics-ui:
+    image: landoop/kafka-topics-ui:0.9.4
+    hostname: kafka-topic-ui
+    container_name: kafka-topics-ui
+    depends_on:
+      - zookeeper
+      - broker
+      - reverse-proxy
+      - rest-proxy
+    restart: always
+    environment:
+      KAFKA_REST_PROXY_URL: "http://rest-proxy:8082/"
+      PROXY: "true"
+    labels:
+      - "traefik.enable=true"      
+      - "traefik.http.routers.kafka-topics-ui.rule=Host(`kafka-topics-ui.localhost`)"
+      - "traefik.http.routers.kafka-topics-ui.middlewares=auth"
+      - "traefik.http.middlewares.auth.basicauth.users=test:$$2a$$12$$J/TuYMm.k42aGn3Buo39ZOcnoi6RN4P2rlMYOU/fozCPku/qmU9ri"
+    
+   
+  connect:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    hostname: connect
+    container_name: connect
+    depends_on:
+      - zookeeper
+      - broker
+    ports:
+      - "8083:8083"
+    restart: always
+    environment:
+      CONNECT_BOOTSTRAP_SERVERS: "broker:9092"
+      CONNECT_REST_ADVERTISED_HOST_NAME: "connect"
+      CONNECT_REST_PORT: 8083
+      CONNECT_GROUP_ID: compose-connect-group
+      CONNECT_CONFIG_STORAGE_TOPIC: docker-connect-configs
+      CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR: 1
+      CONNECT_OFFSET_FLUSH_INTERVAL_MS: 10000
+      CONNECT_OFFSET_STORAGE_TOPIC: docker-connect-offsets
+      CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR: 1
+      CONNECT_STATUS_STORAGE_TOPIC: docker-connect-status
+      CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: 1
+      CONNECT_KEY_CONVERTER: org.apache.kafka.connect.storage.StringConverter
+      CONNECT_VALUE_CONVERTER: org.apache.kafka.connect.json.JsonConverter
+      CONNECT_INTERNAL_KEY_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
+      CONNECT_INTERNAL_VALUE_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
+      CONNECT_LOG4J_ROOT_LOGLEVEL: "INFO"
+      CONNECT_LOG4J_LOGGERS: "org.apache.kafka.connect.runtime.rest=WARN,org.reflections=ERROR,com.mongodb.kafka=DEBUG"
+      CONNECT_PLUGIN_PATH: /usr/share/confluent-hub-components
+      CONNECT_ZOOKEEPER_CONNECT: "zookeeper:2181"
+      CLASSPATH: /usr/share/java/monitoring-interceptors/monitoring-interceptors-6.0.14.jar
+      CONNECT_PRODUCER_INTERCEPTOR_CLASSES: "io.confluent.monitoring.clients.interceptor.MonitoringProducerInterceptor"
+      CONNECT_CONSUMER_INTERCEPTOR_CLASSES: "io.confluent.monitoring.clients.interceptor.MonitoringConsumerInterceptor"
+    
+
+  control-center:
+    image: confluentinc/cp-enterprise-control-center:6.0.14
+    hostname: control-center
+    container_name: control-center
+    depends_on:
+      - zookeeper
+      - broker
+      - connect
+    restart: always
+    environment:
+      CONTROL_CENTER_BOOTSTRAP_SERVERS: 'broker:9092'
+      CONTROL_CENTER_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      CONTROL_CENTER_CONNECT_CLUSTER: 'connect:8083'
+      CONTROL_CENTER_REPLICATION_FACTOR: 1
+      CONTROL_CENTER_INTERNAL_TOPICS_PARTITIONS: 1
+      CONTROL_CENTER_MONITORING_INTERCEPTOR_TOPIC_PARTITIONS: 1
+      CONFLUENT_METRICS_TOPIC_REPLICATION: 1
+      PORT: 9021    
+    labels:
+      - "traefik.enable=true"      
+      - "traefik.http.routers.control-center.rule=Host(`control-center.localhost`)"
+      - "traefik.http.routers.control-center.middlewares=auth"
+      - "traefik.http.middlewares.auth.basicauth.users=test:$$2a$$12$$J/TuYMm.k42aGn3Buo39ZOcnoi6RN4P2rlMYOU/fozCPku/qmU9ri"
+
+
+
+   ############################################
+  # Mongo area - data storage:                 #
+   ############################################
+
+  mongo1:
+    image: mongo:7.0.0-rc10
+    hostname: mongo1
+    container_name: mongo1
+    command: --replSet rs0 --oplogSize 128 --bind_ip 0.0.0.0
+    volumes:
+      - rs1:/data/db
+      - ./scripts:/scripts
+    ports:
+      - "27017:27017"
+    restart: always
+
+  mongo2:
+    image: mongo:7.0.0-rc10
+    hostname: mongo2
+    container_name: mongo2
+    command: --replSet rs0 --oplogSize 128 --bind_ip 0.0.0.0
+    volumes:
+      - rs2:/data/db
+    ports:
+      - "27018:27017"
+    restart: always
+
+  mongo3:
+    image: mongo:7.0.0-rc10
+    hostname: mongo3
+    container_name: mongo3
+    command: --replSet rs0 --oplogSize 128 --bind_ip 0.0.0.0
+    volumes:
+      - rs3:/data/db
+    ports:
+      - "27019:27017"
+    restart: always
+
+  
+  mongo-express:
+    image: mongo-express:1.0.0-alpha.4
+    hostname: mongo-express
+    container_name: mongo-express
+    restart: always
+    environment:
+      ME_CONFIG_MONGODB_URL: mongodb://mongo1:27017,mongo2:27017,mongo3:27017/?replicaSet=rs0    
+    labels:
+      - "traefik.enable=true"      
+      - "traefik.http.routers.mongo-express.rule=Host(`mongo-express.localhost`)"
+      - "traefik.http.routers.mongo-express.middlewares=auth"
+      - "traefik.http.middlewares.auth.basicauth.users=test:$$2a$$12$$J/TuYMm.k42aGn3Buo39ZOcnoi6RN4P2rlMYOU/fozCPku/qmU9ri"
+
+
+  
+   ############################################
+  # Spark area - data processing:              #
+   ############################################
+   
+  jupyter-pyspark-notebook:
+    image: jupyter/pyspark-notebook:python-3.9.13
+    hostname: jupyter-pyspark-notebook
+    container_name: jupyter-pyspark-notebook
+    ports:
+      - "8888:8888"
+    restart: always
+
+
+
+   ############################################
+  # Treafik area - data security:              #
+   ############################################   
+  
+  reverse-proxy:
+    image: traefik:v2.10
+    # Enables the web UI and tells Traefik to listen to docker
+    hostname: reverse-proxy
+    container_name: reverse-proxy
+    command: --api.insecure=true --providers.docker 
+    ports:
+      # The HTTP port
+      - "80:80"
+      # The Web UI (enabled by --api.insecure=true)
+      - "8080:8080"
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+
+
+   ############################################
+  # Volume area                                #
+   ############################################      
+
+volumes:
+  shared-workspace:
+    name: "Spark-distributed-workspace"
+    driver: local
+  rs1:
+    name: rs1
+  rs2:
+    name: rs2
+  rs3:
+    name: rs3
+
+
+
+   ############################################
+  # Network area                               #
+   ############################################  
+
+networks:
+  default:
+    name: kafka-net
+      
+    
+
