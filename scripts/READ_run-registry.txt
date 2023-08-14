@@ -1,0 +1,33 @@
+# Replica registration:
+
+1) Open terminal
+
+2) docker exec -it mongo1 /bin/bash
+
+3) mongosh --shell /scripts/init_replica.js
+
+4) rs.status()
+
+5) exit
+
+'''
+
+# Database registration (Kafka-connect):
+
+1) Open terminal
+
+2) docker exec -it mongo1 /bin/bash
+
+3) cd scripts
+
+4) copy/paste: (not''')
+'''
+
+#!/bin/bash
+
+chmod +x run-registry.sh
+./run-registry.sh
+
+'''
+
+5) Sink is ready!!
