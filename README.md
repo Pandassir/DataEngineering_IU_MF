@@ -26,7 +26,8 @@ IaC mit Docker Compose
     Sollte die Registrierung oder Initialisierung stoppen, dann können die Befehle nochmal gestartet werden.
 
 4) Die Verkaufsdaten können entweder extern mit Python (sales-source-out.py) oder intern mit dem Jupyter/Pyspark-Notebook (sales-source-in.py)
-    gesendt werden. Das kann einige Zeit dauern. Der Status sollte im Python Terminal angezeigt werden.
+    gesendt werden. Der Unterschied der zwei Codes ist, dass sie einen anderen KAFKA_BROKER verwenden. Einmal KAFKA_BROKER = 'localhost:29092' (extern, Spyder-Python) und einmal
+    KAFKA_BROKER = 'localhost:9092' (intern, Jupyter-Python). Das senden der Daten kann einige Zeit in Anspruch nehmen. Der Status sollte im Python Terminal angezeigt werden.
     Beachte!: Um das Jupyter/Pyspark-Notebook zu öffnen, gehe auf den Container und suche das Link:
 
     ![Alt text](image.png) (Example!)
