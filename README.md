@@ -47,6 +47,7 @@ IaC mit Docker Compose
 7) Im Rahmen dieses Projektes wurde für Testzwecke lediglich Basic Auth gewählt. Es können jedoch über Traeafik weitere Sicherheitseinstellungen vorgenommen werden. 
 
 8) Überprüfen der Healthchecks:
+
     Es wurden einige Healthchecks eingefügt. Es können jedoch, nach Wunsch, weitere HC's eingefügt werden. Zum Überprüfen bitte folgenden Befehl in die PowerShell einfügen:
 
         docker ps
